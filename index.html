@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vote for Elysian</title>
+<meta name="description" content="Vote for Elysian every day and earn rewards in game.">
+<style>
+  :root { --bg:#120a22; --card:#1d1233; --line:#2e2050; --gold:#F2C14E; --lav:#C8B6FF; --pink:#FF9FCB; --pale:#ECE6F7; --muted:#A7A9BE; }
+  * { box-sizing:border-box; }
+  .vp { margin:0; min-height:100vh; background:var(--bg); color:var(--pale); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; display:flex; justify-content:center; padding:40px 18px 56px; }
+  .vp-wrap { width:100%; max-width:560px; }
+  .vp-head { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+  .vp-kick { letter-spacing:.18em; font-size:13px; font-weight:700; color:var(--gold); }
+  .vp-kick2 { letter-spacing:.18em; font-size:13px; font-weight:700; color:var(--lav); }
+  .vp h1 { font-size:34px; line-height:1.15; margin:22px 0 8px; background:linear-gradient(90deg,var(--gold),var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .vp-sub { color:var(--muted); font-size:16px; line-height:1.55; margin:0 0 24px; }
+  .vp-list { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+  .vp-site { display:flex; align-items:center; justify-content:space-between; gap:12px; text-decoration:none; color:var(--pale); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 16px; transition:border-color .15s, transform .15s; }
+  .vp-site:hover, .vp-site:focus-visible { border-color:var(--lav); transform:translateY(-1px); outline:none; }
+  .vp-site.done { opacity:.55; }
+  .vp-num { color:var(--gold); font-weight:700; width:22px; }
+  .vp-name { flex:1; font-weight:600; }
+  .vp-go { font-size:14px; color:var(--bg); background:var(--gold); border-radius:999px; padding:6px 14px; font-weight:700; white-space:nowrap; }
+  .vp-site.done .vp-go { background:var(--lav); }
+  .vp-tips { margin-top:24px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; font-size:15px; line-height:1.6; color:var(--muted); }
+  .vp-tips b { color:var(--pale); }
+  .vp-foot { margin-top:22px; font-size:14px; color:var(--muted); text-align:center; }
+  .vp-foot a { color:var(--lav); }
+</style>
+</head>
+<body class="vp">
+<main class="vp-wrap">
+  <div class="vp-head">
+    <svg width="56" height="56" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4 L57 43 L96 50 L57 57 L50 96 L43 57 L4 50 L43 43 Z" fill="#ECE6F7"/><path d="M50 22 L54 46 L78 50 L54 54 L50 78 L46 54 L22 50 L46 46 Z" fill="#FF9FCB" opacity=".8"/><circle cx="50" cy="50" r="7" fill="#F2C14E"/></svg>
+    <div><div class="vp-kick">VOTE FOR</div><div class="vp-kick2">ELYSIAN · GREEK-MYTH SMP</div></div>
+  </div>
+  <h1>Vote every day, earn rewards</h1>
+  <p class="vp-sub">Each vote helps new players find Elysian and gives you Favor in game, plus a crate key every second vote. Seven sites, about two minutes.</p>
+  <ol class="vp-list" id="sites"></ol>
+  <div class="vp-tips">
+    <b>Type your in-game name exactly.</b> Bedrock and console players: include the dot at the start, like <b>.Steve</b>.<br>
+    Rewards arrive in game, even if you're offline when you vote. You can vote on each site once a day.
+  </div>
+  <p class="vp-foot">Java &amp; Bedrock: <b>playelysian.net</b> · <a href="https://discord.playelysian.net">Join the Discord</a> · <a href="https://store.playelysian.net">Store</a></p>
+</main>
+<script>
+  const SITES = [
+    ["MinecraftServers.org", "https://minecraftservers.org/vote/696160"],
+    ["Minecraft-MP", "https://minecraft-mp.com/server/366862/vote/"],
+    ["TopG", "https://topg.org/minecraft-servers/server-688470"],
+    ["Planet Minecraft", "https://www.planetminecraft.com/server/elysian-greek-myth-smp/vote/"],
+    ["Minecraft.buzz", "https://minecraft.buzz/vote/elysian-lifesteal"],
+    ["Minecraft-Server-List", "https://minecraft-server-list.com/server/524964/vote/"],
+    ["Minewolf", "https://minewolf.net/servers/197/vote/"]
+  ];
+  const today = new Date().toISOString().slice(0, 10);
+  let done = {};
+  try { const s = JSON.parse(localStorage.getItem("elysian-votes") || "{}"); if (s.day === today) done = s.done || {}; } catch (e) {}
+  const save = () => { try { localStorage.setItem("elysian-votes", JSON.stringify({ day: today, done })); } catch (e) {} };
+  const list = document.getElementById("sites");
+  SITES.forEach(([name, url], i) => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.className = "vp-site" + (done[name] ? " done" : "");
+    a.href = url; a.target = "_blank"; a.rel = "noopener";
+    const n = document.createElement("span"); n.className = "vp-num"; n.textContent = i + 1;
+    const t = document.createElement("span"); t.className = "vp-name"; t.textContent = name;
+    const g = document.createElement("span"); g.className = "vp-go"; g.textContent = done[name] ? "Voted ✓" : "Vote";
+    a.append(n, t, g);
+    a.addEventListener("click", () => { done[name] = true; save(); a.classList.add("done"); g.textContent = "Voted ✓"; });
+    li.append(a); list.append(li);
+  });
+</script>
+</body>
+</html>
